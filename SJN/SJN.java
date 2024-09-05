@@ -18,7 +18,7 @@ class Process {
 
 public class SJN {
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
+        Scanner scanner = new Scanner(System.in); // baka need nanaman to ni sir T_T
 
         // Input: number of processes
         System.out.print("Enter the number of processes: ");
@@ -40,7 +40,7 @@ public class SJN {
         // Calculate waiting time and turn around time
         int totalWaitingTime = 0;
         int totalTurnAroundTime = 0;
-        processes[0].waitingTime = 0; // First process has no waiting time
+        processes[0].waitingTime = 0; // First process has no waiting time (SJN NGA DIBA)
 
         for (int i = 1; i < n; i++) {
             processes[i].waitingTime = processes[i - 1].waitingTime + processes[i - 1].burstTime;
@@ -62,7 +62,7 @@ public class SJN {
             System.out.println("P" + process.processId + "\t\t" + process.burstTime + "\t\t" + process.waitingTime + "\t\t" + process.turnAroundTime);
         }
 
-        // Output: average waiting time and turn around time
+        // Output: average waiting time and turn around time "Pls sana tama"
         System.out.println("\nAverage Waiting Time: " + averageWaitingTime);
         System.out.println("Average Turnaround Time: " + averageTurnAroundTime);
 
