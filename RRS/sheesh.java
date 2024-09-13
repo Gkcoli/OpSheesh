@@ -27,12 +27,19 @@ public class RoundRobin {
         boolean tryAgain = true;
 
         while (tryAgain) {
-            System.out.print("Enter the number of processes (between 4 and 6): ");
-            int numProcesses = sc.nextInt();
+            int numProcesses;
+            while(true){
 
-            if (numProcesses < 4 || numProcesses > 6) {
-                System.out.println("Please enter a valid number of processes (4 to 6).");
-                continue;
+                System.out.print("Enter the number of processes (between 4 and 6): ");
+                numProcesses = sc.nextInt();
+
+                if (numProcesses >= 4 && numProcesses <= 6) {
+                    break;
+                }else{
+
+                    System.out.print("Invalid. Enter a valid number between 4 to 6.\n\n");
+                 }
+
             }
 
             Queue<Process> processQueue = new LinkedList<>();
@@ -47,6 +54,7 @@ public class RoundRobin {
                 int burstTime = sc.nextInt();
                 processQueue.add(new Process(name, arrivalTime, burstTime));
             }
+            
 
             System.out.print("Enter the time quantum: ");
             int timeQuantum = sc.nextInt();
@@ -109,7 +117,9 @@ public class RoundRobin {
                 }
             }
 
-            // Display process table
+            // Display process table\
+
+            System.out.println("\nRR ALGORITHM");
             System.out.println("\nProcess  Arrival Time  Burst Time  Exit Time  Turnaround Time  Waiting Time");
             for (Process process : processQueue) {
                 System.out.printf("%-8s %-13d %-11d %-10d %-15d %-13d\n",
@@ -125,6 +135,7 @@ public class RoundRobin {
             // Calculate and display averages
             double avgTurnaroundTime = totalTurnaroundTime / numProcesses;
             double avgWaitingTime = totalWaitingTime / numProcesses;
+            System.out.print("\nCompute for the following.");
             System.out.printf("\nAverage Turnaround Time: %.2f\n", avgTurnaroundTime);
             System.out.printf("Average Waiting Time: %.2f\n", avgWaitingTime);
 
