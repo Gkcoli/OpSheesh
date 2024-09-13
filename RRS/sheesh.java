@@ -10,12 +10,14 @@ class Process {
     int exitTime;
     int turnAroundTime;
     int waitingTime;
+    boolean isInQueue;
 
     public Process(String name, int arrivalTime, int burstTime) {
         this.name = name;
         this.arrivalTime = arrivalTime;
         this.burstTime = burstTime;
         this.remainingTime = burstTime;
+        this.isInQueue = false;
     }
 }
 
@@ -25,13 +27,16 @@ public class RoundRobin {
         boolean tryAgain = true;
 
         while (tryAgain) {
-            int numProcesses;
-            do {
-                System.out.print("Enter the number of processes (between 4 and 6): ");
-                numProcesses = sc.nextInt();
-            } while (numProcesses < 4 || numProcesses > 6);
+            System.out.print("Enter the number of processes (between 4 and 6): ");
+            int numProcesses = sc.nextInt();
+
+            if (numProcesses < 4 || numProcesses > 6) {
+                System.out.println("Please enter a valid number of processes (4 to 6).");
+                continue;
+            }
 
             Queue<Process> processQueue = new LinkedList<>();
+            Queue<Process> readyQueue = new LinkedList<>();
             
             for (int i = 0; i < numProcesses; i++) {
                 System.out.print("Enter name of process " + (i + 1) + ": ");
@@ -49,7 +54,7 @@ public class RoundRobin {
             // Output table and Gantt chart setup
             StringBuilder ganttChart = new StringBuilder();
             StringBuilder timeLine = new StringBuilder();
-            int lastTime = 0;
+            timeLine.append(0);
 
             System.out.println("\nExecuting Round Robin Scheduling...");
             
@@ -58,37 +63,38 @@ public class RoundRobin {
             double totalTurnaroundTime = 0;
             double totalWaitingTime = 0;
             
-            Queue<Process> waitingQueue = new LinkedList<>();
-
+            // Move processes to readyQueue when their arrival time is up
             while (completedProcesses < numProcesses) {
-                boolean processExecuted = false;
-
-                // Check for any process that has arrived and is ready to execute
                 for (Process process : processQueue) {
-                    if (process.arrivalTime <= currentTime && process.remainingTime > 0) {
-                        waitingQueue.add(process);
+                    if (process.arrivalTime <= currentTime && !process.isInQueue && process.remainingTime > 0) {
+                        readyQueue.add(process);
+                        process.isInQueue = true;
                     }
                 }
 
-                if (!waitingQueue.isEmpty()) {
-                    Process currentProcess = waitingQueue.poll();
+                if (!readyQueue.isEmpty()) {
+                    Process currentProcess = readyQueue.poll();
 
-                    // If the process is executed for part or full of its time
                     if (currentProcess.remainingTime > timeQuantum) {
                         currentProcess.remainingTime -= timeQuantum;
                         currentTime += timeQuantum;
-                        ganttChart.append(currentProcess.name).append(" ");
-                        timeLine.append(lastTime).append(" ");
-                        lastTime = currentTime;
-                        waitingQueue.add(currentProcess); // Add back for future execution
+                        ganttChart.append(currentProcess.name).append(" | ");
+                        timeLine.append("    ").append(currentTime).append(" ");
+                        
+                        // Re-add to queue if not finished
+                        for (Process process : processQueue) {
+                            if (process.arrivalTime <= currentTime && !process.isInQueue && process.remainingTime > 0) {
+                                readyQueue.add(process);
+                                process.isInQueue = true;
+                            }
+                        }
+                        readyQueue.add(currentProcess);
                     } else {
-                        // Execute fully
                         currentTime += currentProcess.remainingTime;
                         currentProcess.exitTime = currentTime;
                         currentProcess.remainingTime = 0;
-                        ganttChart.append(currentProcess.name).append(" ");
-                        timeLine.append(lastTime).append(" ");
-                        lastTime = currentTime;
+                        ganttChart.append(currentProcess.name).append(" | ");
+                        timeLine.append("    ").append(currentTime).append(" ");
 
                         currentProcess.turnAroundTime = currentProcess.exitTime - currentProcess.arrivalTime;
                         currentProcess.waitingTime = currentProcess.turnAroundTime - currentProcess.burstTime;
@@ -98,20 +104,10 @@ public class RoundRobin {
 
                         completedProcesses++;
                     }
-
-                    processExecuted = true; // Process was executed in this time quantum
-                }
-
-                // If no process executed, advance the time and add idle to Gantt chart
-                if (!processExecuted) {
+                } else {
                     currentTime++;
-                    ganttChart.append("Idle ");
-                    timeLine.append(lastTime).append(" ");
-                    lastTime = currentTime;
                 }
             }
-
-            timeLine.append(lastTime);
 
             // Display process table
             System.out.println("\nProcess  Arrival Time  Burst Time  Exit Time  Turnaround Time  Waiting Time");
