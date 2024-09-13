@@ -53,8 +53,8 @@ public class RoundRobin {
 
             // Output table and Gantt chart setup
             StringBuilder ganttChart = new StringBuilder();
-            StringBuilder timeLine = new StringBuilder();
-            timeLine.append(0);
+           
+            
 
             System.out.println("\nExecuting Round Robin Scheduling...");
             
@@ -79,7 +79,7 @@ public class RoundRobin {
                         currentProcess.remainingTime -= timeQuantum;
                         currentTime += timeQuantum;
                         ganttChart.append(currentProcess.name).append(" | ");
-                        timeLine.append("    ").append(currentTime).append(" ");
+                       
                         
                         // Re-add to queue if not finished
                         for (Process process : processQueue) {
@@ -94,7 +94,7 @@ public class RoundRobin {
                         currentProcess.exitTime = currentTime;
                         currentProcess.remainingTime = 0;
                         ganttChart.append(currentProcess.name).append(" | ");
-                        timeLine.append("    ").append(currentTime).append(" ");
+                     
 
                         currentProcess.turnAroundTime = currentProcess.exitTime - currentProcess.arrivalTime;
                         currentProcess.waitingTime = currentProcess.turnAroundTime - currentProcess.burstTime;
@@ -120,7 +120,7 @@ public class RoundRobin {
             // Display Gantt chart
             System.out.println("\nGantt Chart:");
             System.out.println(ganttChart);
-            System.out.println(timeLine);
+
 
             // Calculate and display averages
             double avgTurnaroundTime = totalTurnaroundTime / numProcesses;
