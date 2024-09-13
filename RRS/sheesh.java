@@ -25,8 +25,11 @@ public class RoundRobin {
         boolean tryAgain = true;
 
         while (tryAgain) {
-            System.out.print("Enter the number of processes: ");
-            int numProcesses = sc.nextInt();
+            int numProcesses;
+            do {
+                System.out.print("Enter the number of processes (between 4 and 6): ");
+                numProcesses = sc.nextInt();
+            } while (numProcesses < 4 || numProcesses > 6);
 
             Queue<Process> processQueue = new LinkedList<>();
             
